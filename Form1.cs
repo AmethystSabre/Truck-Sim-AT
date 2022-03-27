@@ -8,16 +8,43 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Shared;
+using System.Threading;
 
 namespace ETS2_DualSenseAT_Mod
 {
     public partial class Form1 : Form
     {
-        public Ets2SdkTelemetry Telemetry;
 
+        static UdpClient client;
+        static IPEndPoint endPoint;
+        static bool Connect()
+        {
+            try
+            {
+                client = new UdpClient();
+                var portNumber = File.ReadAllText(@"C:\Temp\DualSenseX\DualSenseX_PortNumber.txt");
+                endPoint = new IPEndPoint(Triggers.localhost, Convert.ToInt32(portNumber));
+                return true;
+            }catch(Exception ex)
+            {
+                return false;
+            }
+        }
+
+        static void Send(Packet data)
+        {
+            var RequestData = Encoding.ASCII.GetBytes(Triggers.PacketToJson(data));
+            client.Send(RequestData, RequestData.Length, endPoint);
+        }
+
+        public Ets2SdkTelemetry Telemetry;
+        static int speed_limit_led_step = 0;
         public Form1()
         {
             InitializeComponent();
@@ -33,15 +60,17 @@ namespace ETS2_DualSenseAT_Mod
                 statusLbl.Text = "Status: " + Telemetry.Error.Message;
             }
 
-            if (!File.Exists(Application.StartupPath + "\\DualSenseX_CommandLineArgs.bat"))
-            {
-                statusLbl.Text = "Status: DualSenseX Batch file not found!";
-            }
-            else
-            {
-                Process.Start(Application.StartupPath + "\\DualSenseX_CommandLineArgs.bat");
-                statusLbl.Text = "Status: Ready!";
-            }
+            //if (!File.Exists(Application.StartupPath + "\\DualSenseX_CommandLineArgs.bat"))
+            //{
+            //    statusLbl.Text = "Status: DualSenseX Batch file not found!";
+            //}
+            //else
+            //{
+            //    //Process.Start(Application.StartupPath + "\\DualSenseX_CommandLineArgs.bat");
+            //    statusLbl.Text = "Status: Ready!";
+            //}
+            //Substr
+            statusLbl.Text = "Status: Ready!";
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -53,12 +82,16 @@ namespace ETS2_DualSenseAT_Mod
                 Application.Exit();
             }
 
-            if (!File.Exists(Application.StartupPath + "\\DualSenseX_CommandLineArgs.bat"))
-            {
-                MessageBox.Show("DualSenseX Command Line not found.", "DualSense AT Mod");
-                Application.Exit();
-            }
+            //if (!File.Exists(Application.StartupPath + "\\DualSenseX_CommandLineArgs.bat"))
+            //{
+            //    MessageBox.Show("DualSenseX Command Line not found.", "DualSense AT Mod");
+            //    Application.Exit();
+            //}
 
+            if (!Connect())
+            {
+                MessageBox.Show("Failed to connect to the DSX UDP Server ("+ Triggers.localhost, Convert.ToInt32(File.ReadAllText(@"C:\Temp\DualSenseX\DualSenseX_PortNumber.txt")) + ")");
+            }
         }
 
         private void TelemetryOnJobFinished(object sender, EventArgs args)
@@ -75,7 +108,7 @@ namespace ETS2_DualSenseAT_Mod
 
         private void Telemetry_Data(Ets2Telemetry data, bool updated)
         {
-
+            //Thread.Sleep(350);
 
             try
             {
@@ -85,12 +118,32 @@ namespace ETS2_DualSenseAT_Mod
                     return;
                 }
 
+                Packet p = new Packet();
+
+                int controllerIndex = 0;
+
+                int inst_index = 0;
+
+                p.instructions = new Instruction[10];
+
 
 
                 if (data.Paused)
                 {
-                    Controller.WriteController.ResetTrigger(Controller.Triggers.LeftTrigger);
-                    Controller.WriteController.ResetTrigger(Controller.Triggers.RightTrigger);
+                    p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                    p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Normal };
+
+                    inst_index += +1;
+
+                    p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                    p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Normal };
+
+                    inst_index += +1;
+
+                    p.instructions[inst_index].type = InstructionType.RGBUpdate;
+                    p.instructions[inst_index].parameters = new object[] { controllerIndex, 252, 186, 3 };
+                    inst_index += +1;
+                    Send(p);
                     statusLbl.Text = "Status: Game paused.";
                     return;
                 }
@@ -100,55 +153,190 @@ namespace ETS2_DualSenseAT_Mod
 
                     if (data.Drivetrain.SpeedKmh < 1)
                     {
-                        Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(8)");
-                        Controller.WriteController.SetLeftTrigger(Controller.Types.Normal, "(0)(0)(0)(0)(0)(0)"); //0,9,4,3,19,2
-
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 10, 2 };
+                        inst_index += +1;
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Normal };
+                        inst_index += +1;
                     }
                     else if (data.Drivetrain.SpeedKmh < 5)
                     {
-                        Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(7)");
-                        Controller.WriteController.SetLeftTrigger(Controller.Types.Normal, "(0)(0)(0)(0)(0)(0)"); //0,9,4,3,19,2
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 10, 2 };
+                        inst_index += +1;
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Normal, 0, 0, 0, 0, 0,0 };
+                        inst_index += +1;
+                        // Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(7)");
+                        //Controller.WriteController.SetLeftTrigger(Controller.Types.Normal, "(0)(0)(0)(0)(0)(0)"); //0,9,4,3,19,2
 
                     }
 
                     else if (data.Drivetrain.SpeedKmh < 10)
                     {
-                        Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(7)");
-                        Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 20, 2 };
+                        inst_index += +1;
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                        inst_index += +1;
+                        // Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(7)");
+                        //Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
 
                     }
 
                     else if (data.Drivetrain.SpeedKmh < 15)
                     {
-                        Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(6)");
-                        Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 30, 2 };
+                        inst_index += +1;
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                        inst_index += +1;
+                        //Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(6)");
+                        //Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
                     }
                     else if (data.Drivetrain.SpeedKmh < 20)
                     {
-                        Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(5)");
-                        Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 30, 2 };
+                        inst_index += +1;
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                        inst_index += +1;
+                        //Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(5)");
+                        //Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
                     }
                     else if (data.Drivetrain.SpeedKmh < 25)
                     {
-                        Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(4)");
-                        Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 0, 4 };
+                        inst_index += +1;
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                        inst_index += +1;
+                        // Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(4)");
+                        //Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
                     }
                     else if (data.Drivetrain.SpeedKmh < 30)
                     {
-                        Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(3)");
-                        Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 0, 3 };
+                        inst_index += +1;
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                        inst_index += +1;
+                        //Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(3)");
+                        //Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
                     }
                     else if (data.Drivetrain.SpeedKmh < 35)
                     {
-                        Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(2)");
-                        Controller.WriteController.SetRightTrigger(Controller.Types.Normal);
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 0, 2 };
+                        inst_index += +1;
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                        inst_index += +1;
+                        //Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(2)");
+                        //Controller.WriteController.SetRightTrigger(Controller.Types.Normal);
                     }
 
                     else if (data.Drivetrain.SpeedKmh < 40)
                     {
-                        Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(1)");
-                        Controller.WriteController.SetRightTrigger(Controller.Types.Normal);
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 0, 1 };
+                        inst_index += +1;
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                        inst_index += +1;
+                        // Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(1)");
+                        //Controller.WriteController.SetRightTrigger(Controller.Types.Normal);
                     }
+                    else if (data.Drivetrain.SpeedKmh > 41)
+                    {
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 0, 0 };
+                        inst_index += +1;
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                        inst_index += +1;
+                    }
+
+                    if (data.Drivetrain.Speed >= data.Job.SpeedLimit)
+                    {
+                        if (speed_limit_led_step == 0)
+                        {
+                            p.instructions[inst_index].type = InstructionType.RGBUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, 237, 61, 7 };
+                            inst_index += +1;
+                            // PLAYER LED 1-5 true/false state
+                            p.instructions[inst_index].type = InstructionType.PlayerLED;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, true, false, false, false, false };
+                            inst_index += +1;
+                            speed_limit_led_step = 1;
+                        }
+                        else if (speed_limit_led_step == 1)
+                        {
+                            p.instructions[inst_index].type = InstructionType.RGBUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, 252, 0, 0 };
+                            inst_index += +1;
+                            // PLAYER LED 1-5 true/false state
+                            p.instructions[inst_index].type = InstructionType.PlayerLED;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, false, true, false, false, false };
+                            inst_index += +1;
+                            speed_limit_led_step = 2;
+                        }
+                        else if (speed_limit_led_step == 2)
+                        {
+                            p.instructions[inst_index].type = InstructionType.RGBUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, 148, 22, 0 };
+                            inst_index += +1;
+                            // PLAYER LED 1-5 true/false state
+                            p.instructions[inst_index].type = InstructionType.PlayerLED;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, false, false, true, false, false };
+                            inst_index += +1;
+
+                            speed_limit_led_step = 3;
+                        }
+                        else if (speed_limit_led_step == 3)
+                        {
+                            p.instructions[inst_index].type = InstructionType.RGBUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, 237, 61, 7 };
+                            inst_index += +1;
+                            // PLAYER LED 1-5 true/false state
+                            p.instructions[inst_index].type = InstructionType.PlayerLED;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, false, false, false, true, false };
+                            inst_index += +1;
+
+                            speed_limit_led_step = 4;
+                        }
+                        else if (speed_limit_led_step == 4)
+                        {
+                            p.instructions[inst_index].type = InstructionType.RGBUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, 148, 22, 0 };
+                            inst_index += +1;
+                            // PLAYER LED 1-5 true/false state
+                            p.instructions[inst_index].type = InstructionType.PlayerLED;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, false, false, false, false, true };
+                            inst_index += +1;
+
+                            speed_limit_led_step = 0;
+                        }
+                    }
+                    else
+                    {
+                        p.instructions[inst_index].type = InstructionType.RGBUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, 119, 3, 252 };
+                        inst_index += +1;
+
+                        // PLAYER LED 1-5 true/false state
+                        p.instructions[inst_index].type = InstructionType.PlayerLED;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, true, false, false, false, true };
+                        inst_index += +1;
+                    }
+
+                    Send(p);
                 }
             }
             catch
@@ -156,82 +344,27 @@ namespace ETS2_DualSenseAT_Mod
             }
         }
 
-        public struct Controller
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            public enum Types
-            {
-                Normal = 1,
-                Hard = 2,
-                VeryHard = 3,
-                Machine = 4,
-                Resistance = 5,
-            }
-            public enum Triggers
-            {
-                LeftTrigger = 1,
-                RightTrigger = 2,
-            }
+            Packet p = new Packet();
 
-            public struct WriteController
-            {
-                public static void SetRightTrigger(Controller.Types type, string customargs = "(0)(0)")
-                {
-                    var MyIni = new IniFile(@"C:\DualsenseX_GameTriggers.txt");
+            int controllerIndex = 0;
 
-                    switch (type)
-                    {
-                        case Controller.Types.Normal:
-                            MyIni.Write("RightTrigger", "Normal");
-                            break;
-                        case Controller.Types.Hard:
-                            MyIni.Write("RightTrigger", "Hard");
-                            break;
-                        case Controller.Types.VeryHard:
-                            MyIni.Write("RightTrigger", "VeryHard");
-                            break;
-                        case Controller.Types.Resistance:
-                            MyIni.Write("RightTrigger", "Resistance");
-                            MyIni.Write("ForceRightTrigger", customargs);
-                            break;
-                    }
-                }
+            p.instructions = new Instruction[4];
 
-                public static void SetLeftTrigger(Controller.Types type, string customargs = "(0)(0)")
-                {
-                    var MyIni = new IniFile(@"C:\DualsenseX_GameTriggers.txt");
+            p.instructions[0].type = InstructionType.TriggerUpdate;
+            p.instructions[0].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Normal };
 
-                    switch (type)
-                    {
-                        case Controller.Types.Normal:
-                            MyIni.Write("LeftTrigger", "Normal");
-                            break;
-                        case Controller.Types.Hard:
-                            MyIni.Write("LeftTrigger", "Hard");
-                            break;
-                        case Controller.Types.VeryHard:
-                            MyIni.Write("LeftTrigger", "VeryHard");
-                            break;
-                        case Controller.Types.Machine:
-                            MyIni.Write("LeftTrigger", "Machine");
-                            MyIni.Write("ForceLeftTrigger", customargs);
-                            break;
-                    }
-                }
 
-                public static void ResetTrigger(Controller.Triggers trigger)
-                {
-                    var MyIni = new IniFile(@"C:\DualsenseX_GameTriggers.txt");
-                    switch (trigger)
-                    {
-                        case Controller.Triggers.LeftTrigger:
-                            MyIni.Write("LeftTrigger", "Normal");
-                            break;
-                        case Controller.Triggers.RightTrigger:
-                            MyIni.Write("RightTrigger", "Normal");
-                            break;
-                    }
-                }
-            }
+            p.instructions[1].type = InstructionType.TriggerUpdate;
+            p.instructions[1].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Normal };
+
+
+            p.instructions[2].type = InstructionType.RGBUpdate;
+            p.instructions[2].parameters = new object[] { controllerIndex, 66, 135, 245 };
+
+            Send(p);
+            statusLbl.Text = "Status: Closing";
         }
     }
 }

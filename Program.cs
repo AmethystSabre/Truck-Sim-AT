@@ -22,6 +22,7 @@ namespace ETS2_DualSenseAT_Mod
                 Directory.CreateDirectory(@"C:\Temp\DualSenseX\DualSenseAT\games\" + Constants.app_id);
 
             var Settings = new IniFile(@"C:\Temp\DualSenseX\DualSenseAT\games\" + Constants.app_id+@"\settings.ini");
+
             if (!Directory.Exists(Settings.Read("game_path")))
                 Application.Run(new Setup());
             else

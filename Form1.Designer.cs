@@ -57,7 +57,7 @@
             // JobLbl
             // 
             this.JobLbl.AutoSize = true;
-            this.JobLbl.Location = new System.Drawing.Point(139, 165);
+            this.JobLbl.Location = new System.Drawing.Point(165, 165);
             this.JobLbl.Name = "JobLbl";
             this.JobLbl.Size = new System.Drawing.Size(63, 13);
             this.JobLbl.TabIndex = 2;
@@ -78,6 +78,7 @@
             this.MinimumSize = new System.Drawing.Size(342, 223);
             this.Name = "Form1";
             this.Text = "Euro Truck Simulator 2 | DualSense AT";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
