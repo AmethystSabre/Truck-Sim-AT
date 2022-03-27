@@ -33,7 +33,15 @@ namespace ETS2_DualSenseAT_Mod
                 statusLbl.Text = "Status: " + Telemetry.Error.Message;
             }
 
-            statusLbl.Text = "Status: Ready!";
+            if (!File.Exists(Application.StartupPath + "\\DualSenseX_CommandLineArgs.bat"))
+            {
+                statusLbl.Text = "Status: DualSenseX Batch file not found!";
+            }
+            else
+            {
+                Process.Start(Application.StartupPath + "\\DualSenseX_CommandLineArgs.bat");
+                statusLbl.Text = "Status: Ready!";
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
