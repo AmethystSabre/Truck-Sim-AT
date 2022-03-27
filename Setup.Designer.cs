@@ -126,6 +126,7 @@
             this.MinimumSize = new System.Drawing.Size(659, 453);
             this.Name = "Setup";
             this.Text = "Setup";
+            this.Load += new System.EventHandler(this.Setup_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
