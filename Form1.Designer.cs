@@ -38,6 +38,7 @@
             // statusLbl
             // 
             this.statusLbl.AutoSize = true;
+            this.statusLbl.ForeColor = System.Drawing.Color.White;
             this.statusLbl.Location = new System.Drawing.Point(12, 165);
             this.statusLbl.Name = "statusLbl";
             this.statusLbl.Size = new System.Drawing.Size(89, 13);
@@ -57,6 +58,7 @@
             // JobLbl
             // 
             this.JobLbl.AutoSize = true;
+            this.JobLbl.ForeColor = System.Drawing.Color.White;
             this.JobLbl.Location = new System.Drawing.Point(165, 165);
             this.JobLbl.Name = "JobLbl";
             this.JobLbl.Size = new System.Drawing.Size(63, 13);
@@ -67,6 +69,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(326, 184);
             this.Controls.Add(this.JobLbl);
             this.Controls.Add(this.pictureBox1);

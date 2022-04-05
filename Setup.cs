@@ -27,16 +27,31 @@ namespace ETS2_DualSenseAT_Mod
                 MessageBox.Show("The path entered is not valid!", "DualSense AT Mod");
                 return;
             }
-
-            if (!File.Exists(textBox1.Text + "\\bin\\win_x64\\eurotrucks2.exe"))
+            if (Environment.Is64BitOperatingSystem)
             {
-                MessageBox.Show("eurotrucks2.exe not found on " + textBox1.Text + "\\bin\\win_x64\\", "DualSense AT Mod");
-                return;
+                if (!File.Exists(textBox1.Text + "\\bin\\win_x64\\eurotrucks2.exe"))
+                {
+                    MessageBox.Show("eurotrucks2.exe not found on " + textBox1.Text + "\\bin\\win_x64\\", "DualSense AT Mod");
+                    return;
+                }
+
+                if (!File.Exists(textBox1.Text + "\\bin\\win_x64\\plugins\\ets2-telemetry.dll"))
+                {
+                    File.Copy(Application.StartupPath + "\\ets2-telemetry.x64.dll", textBox1.Text + "\\bin\\win_x64\\plugins\\ets2-telemetry.dll");
+                }
             }
-
-            if (!File.Exists(textBox1.Text + "\\bin\\win_x64\\plugins\\ets2-telemetry.dll"))
+            else
             {
-                File.Copy(Application.StartupPath + "\\ets2-telemetry.dll", textBox1.Text + "\\bin\\win_x64\\plugins\\ets2-telemetry.dll");
+                if (!File.Exists(textBox1.Text + "\\bin\\win_x86\\eurotrucks2.exe"))
+                {
+                    MessageBox.Show("eurotrucks2.exe not found on " + textBox1.Text + "\\bin\\win_x86\\", "DualSense AT Mod");
+                    return;
+                }
+
+                if (!File.Exists(textBox1.Text + "\\bin\\win_x86\\plugins\\ets2-telemetry.dll"))
+                {
+                    File.Copy(Application.StartupPath + "\\ets2-telemetry.x86.dll", textBox1.Text + "\\bin\\win_x64\\plugins\\ets2-telemetry.dll");
+                }
             }
 
             var Settings = new IniFile(@"C:\Temp\DualSenseX\DualSenseAT\games\" + Constants.app_id + @"\settings.ini");
