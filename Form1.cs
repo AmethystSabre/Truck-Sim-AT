@@ -149,179 +149,254 @@ namespace ETS2_DualSenseAT_Mod
                 }
                 else
                 {
+                    statusLbl.Text = "Status: Running.";
                     //Here's our algorithm that changes how the triggers work according to how fast the truck is
 
                     if (data.Drivetrain.SpeedKmh < 1)
                     {
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 10, 2 };
-                        inst_index += +1;
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Normal };
-                        inst_index += +1;
+                        if (AcceleratorFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 10, 2 };
+                            inst_index += +1;
+                        }
+                        if (BrakeFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Normal };
+                            inst_index += +1;
+                        }
+
+                        Send(p);
+                        //return;
                     }
                     else if (data.Drivetrain.SpeedKmh < 5)
                     {
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 10, 2 };
-                        inst_index += +1;
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Normal, 0, 0, 0, 0, 0,0 };
-                        inst_index += +1;
+                        if (AcceleratorFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 10, 2 };
+                            inst_index += +1;
+                        }
+                        if (BrakeFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Normal, 0, 0, 0, 0, 0, 0 };
+                            inst_index += +1;
+                        }
                         // Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(7)");
                         //Controller.WriteController.SetLeftTrigger(Controller.Types.Normal, "(0)(0)(0)(0)(0)(0)"); //0,9,4,3,19,2
-
+                        Send(p);
                     }
 
                     else if (data.Drivetrain.SpeedKmh < 10)
                     {
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 20, 2 };
-                        inst_index += +1;
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
-                        inst_index += +1;
+                        if (AcceleratorFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 20, 2 };
+                            inst_index += +1;
+                        }
+                        if (BrakeFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                            inst_index += +1;
+                        }
                         // Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(7)");
                         //Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
-
+                        Send(p);
                     }
 
                     else if (data.Drivetrain.SpeedKmh < 15)
                     {
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 30, 2 };
-                        inst_index += +1;
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
-                        inst_index += +1;
+                        if (AcceleratorFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 30, 2 };
+                            inst_index += +1;
+                        }
+                        if (BrakeFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                            inst_index += +1;
+                        }
                         //Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(6)");
                         //Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
+                        Send(p);
                     }
                     else if (data.Drivetrain.SpeedKmh < 20)
                     {
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 30, 2 };
-                        inst_index += +1;
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
-                        inst_index += +1;
+                        if (AcceleratorFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Machine, 0, 9, 3, 3, 30, 2 };
+                            inst_index += +1;
+                        }
+                        if (BrakeFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                            inst_index += +1;
+                        }
                         //Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(5)");
                         //Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
+                        Send(p);
                     }
                     else if (data.Drivetrain.SpeedKmh < 25)
                     {
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 0, 4 };
-                        inst_index += +1;
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
-                        inst_index += +1;
+                        if (AcceleratorFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 0, 4 };
+                            inst_index += +1;
+                        }
+                        if (BrakeFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                            inst_index += +1;
+                        }
                         // Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(4)");
                         //Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
+                        Send(p);
                     }
                     else if (data.Drivetrain.SpeedKmh < 30)
                     {
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 0, 3 };
-                        inst_index += +1;
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
-                        inst_index += +1;
+                        if (AcceleratorFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 0, 3 };
+                            inst_index += +1;
+                        }
+                        if (BrakeFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                            inst_index += +1;
+                        }
                         //Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(3)");
                         //Controller.WriteController.SetLeftTrigger(Controller.Types.Machine, "(0)(9)(4)(3)(19)(2)");
+                        Send(p);
                     }
                     else if (data.Drivetrain.SpeedKmh < 35)
                     {
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 0, 2 };
-                        inst_index += +1;
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
-                        inst_index += +1;
+                        if (AcceleratorFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 0, 2 };
+                            inst_index += +1;
+                        }
+                        if (BrakeFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                            inst_index += +1;
+                        }
                         //Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(2)");
                         //Controller.WriteController.SetRightTrigger(Controller.Types.Normal);
+                        Send(p);
                     }
 
                     else if (data.Drivetrain.SpeedKmh < 40)
                     {
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 0, 1 };
-                        inst_index += +1;
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
-                        inst_index += +1;
+                        if (AcceleratorFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 0, 1 };
+                            inst_index += +1;
+                        }
+                        if (BrakeFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                            inst_index += +1;
+                        }
                         // Controller.WriteController.SetRightTrigger(Controller.Types.Resistance, "(0)(1)");
                         //Controller.WriteController.SetRightTrigger(Controller.Types.Normal);
+                        Send(p);
                     }
                     else if (data.Drivetrain.SpeedKmh > 41)
                     {
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 0, 0 };
-                        inst_index += +1;
-                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
-                        inst_index += +1;
+                        if (AcceleratorFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Resistance, 4, 2 };
+                            inst_index += +1;
+                        }
+                        //AcceleratorBreak
+                        if (BrakeFeedback.Checked)
+                        {
+                            p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Machine, 0, 9, 4, 3, 19, 2 };
+                            inst_index += +1;
+                        }
+                        Send(p);
                     }
 
-                    if (data.Drivetrain.Speed >= data.Job.SpeedLimit)
+                    if (data.Drivetrain.Speed > data.Job.SpeedLimit)
                     {
-                        if (speed_limit_led_step == 0)
+                        if (LedAlarmsOnSpeedLimit.Checked)
                         {
-                            p.instructions[inst_index].type = InstructionType.RGBUpdate;
-                            p.instructions[inst_index].parameters = new object[] { controllerIndex, 237, 61, 7 };
-                            inst_index += +1;
-                            // PLAYER LED 1-5 true/false state
-                            p.instructions[inst_index].type = InstructionType.PlayerLED;
-                            p.instructions[inst_index].parameters = new object[] { controllerIndex, true, false, false, false, false };
-                            inst_index += +1;
-                            speed_limit_led_step = 1;
-                        }
-                        else if (speed_limit_led_step == 1)
-                        {
-                            p.instructions[inst_index].type = InstructionType.RGBUpdate;
-                            p.instructions[inst_index].parameters = new object[] { controllerIndex, 252, 0, 0 };
-                            inst_index += +1;
-                            // PLAYER LED 1-5 true/false state
-                            p.instructions[inst_index].type = InstructionType.PlayerLED;
-                            p.instructions[inst_index].parameters = new object[] { controllerIndex, false, true, false, false, false };
-                            inst_index += +1;
-                            speed_limit_led_step = 2;
-                        }
-                        else if (speed_limit_led_step == 2)
-                        {
-                            p.instructions[inst_index].type = InstructionType.RGBUpdate;
-                            p.instructions[inst_index].parameters = new object[] { controllerIndex, 148, 22, 0 };
-                            inst_index += +1;
-                            // PLAYER LED 1-5 true/false state
-                            p.instructions[inst_index].type = InstructionType.PlayerLED;
-                            p.instructions[inst_index].parameters = new object[] { controllerIndex, false, false, true, false, false };
-                            inst_index += +1;
+                            if (speed_limit_led_step == 0)
+                            {
+                                p.instructions[inst_index].type = InstructionType.RGBUpdate;
+                                p.instructions[inst_index].parameters = new object[] { controllerIndex, 237, 61, 7 };
+                                inst_index += +1;
+                                // PLAYER LED 1-5 true/false state
+                                p.instructions[inst_index].type = InstructionType.PlayerLED;
+                                p.instructions[inst_index].parameters = new object[] { controllerIndex, true, false, false, false, false };
+                                inst_index += +1;
+                                speed_limit_led_step = 1;
+                            }
+                            else if (speed_limit_led_step == 1)
+                            {
+                                p.instructions[inst_index].type = InstructionType.RGBUpdate;
+                                p.instructions[inst_index].parameters = new object[] { controllerIndex, 252, 0, 0 };
+                                inst_index += +1;
+                                // PLAYER LED 1-5 true/false state
+                                p.instructions[inst_index].type = InstructionType.PlayerLED;
+                                p.instructions[inst_index].parameters = new object[] { controllerIndex, false, true, false, false, false };
+                                inst_index += +1;
+                                speed_limit_led_step = 2;
+                            }
+                            else if (speed_limit_led_step == 2)
+                            {
+                                p.instructions[inst_index].type = InstructionType.RGBUpdate;
+                                p.instructions[inst_index].parameters = new object[] { controllerIndex, 148, 22, 0 };
+                                inst_index += +1;
+                                // PLAYER LED 1-5 true/false state
+                                p.instructions[inst_index].type = InstructionType.PlayerLED;
+                                p.instructions[inst_index].parameters = new object[] { controllerIndex, false, false, true, false, false };
+                                inst_index += +1;
 
-                            speed_limit_led_step = 3;
-                        }
-                        else if (speed_limit_led_step == 3)
-                        {
-                            p.instructions[inst_index].type = InstructionType.RGBUpdate;
-                            p.instructions[inst_index].parameters = new object[] { controllerIndex, 237, 61, 7 };
-                            inst_index += +1;
-                            // PLAYER LED 1-5 true/false state
-                            p.instructions[inst_index].type = InstructionType.PlayerLED;
-                            p.instructions[inst_index].parameters = new object[] { controllerIndex, false, false, false, true, false };
-                            inst_index += +1;
+                                speed_limit_led_step = 3;
+                            }
+                            else if (speed_limit_led_step == 3)
+                            {
+                                p.instructions[inst_index].type = InstructionType.RGBUpdate;
+                                p.instructions[inst_index].parameters = new object[] { controllerIndex, 237, 61, 7 };
+                                inst_index += +1;
+                                // PLAYER LED 1-5 true/false state
+                                p.instructions[inst_index].type = InstructionType.PlayerLED;
+                                p.instructions[inst_index].parameters = new object[] { controllerIndex, false, false, false, true, false };
+                                inst_index += +1;
 
-                            speed_limit_led_step = 4;
-                        }
-                        else if (speed_limit_led_step == 4)
-                        {
-                            p.instructions[inst_index].type = InstructionType.RGBUpdate;
-                            p.instructions[inst_index].parameters = new object[] { controllerIndex, 148, 22, 0 };
-                            inst_index += +1;
-                            // PLAYER LED 1-5 true/false state
-                            p.instructions[inst_index].type = InstructionType.PlayerLED;
-                            p.instructions[inst_index].parameters = new object[] { controllerIndex, false, false, false, false, true };
-                            inst_index += +1;
+                                speed_limit_led_step = 4;
+                            }
+                            else if (speed_limit_led_step == 4)
+                            {
+                                p.instructions[inst_index].type = InstructionType.RGBUpdate;
+                                p.instructions[inst_index].parameters = new object[] { controllerIndex, 148, 22, 0 };
+                                inst_index += +1;
+                                // PLAYER LED 1-5 true/false state
+                                p.instructions[inst_index].type = InstructionType.PlayerLED;
+                                p.instructions[inst_index].parameters = new object[] { controllerIndex, false, false, false, false, true };
+                                inst_index += +1;
 
-                            speed_limit_led_step = 0;
+                                speed_limit_led_step = 0;
+                            }
                         }
                     }
                     else
@@ -331,10 +406,73 @@ namespace ETS2_DualSenseAT_Mod
                         inst_index += +1;
 
                         // PLAYER LED 1-5 true/false state
-                        p.instructions[inst_index].type = InstructionType.PlayerLED;
-                        p.instructions[inst_index].parameters = new object[] { controllerIndex, true, false, false, false, true };
+                        //p.instructions[inst_index].type = InstructionType.PlayerLED;
+                        //p.instructions[inst_index].parameters = new object[] { controllerIndex, true, false, false, false, true };
+                        //inst_index += +1;
+                    }
+
+                    if (!AcceleratorFeedback.Checked)
+                    {
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Right, TriggerMode.Normal };
                         inst_index += +1;
                     }
+                    if (!BrakeFeedback.Checked)
+                    {
+                        p.instructions[inst_index].type = InstructionType.TriggerUpdate;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, Trigger.Left, TriggerMode.Normal };
+                        inst_index += +1;
+                    }
+
+
+                    if (TruckLightsIndicator.Checked)
+                    {
+                        if (data.Drivetrain.Speed < data.Job.SpeedLimit)
+                        {
+                            if (data.Lights.HighBeams)
+                            {
+                                // PLAYER LED 1-5 true/false state
+                                p.instructions[inst_index].type = InstructionType.PlayerLED;
+                                p.instructions[inst_index].parameters = new object[] { controllerIndex, true, false, false, false, true };
+                                inst_index += +1;
+                                //label1.Text = "HighBeams";
+                            }
+                            else if (data.Lights.LowBeams)
+                            {
+                                // label1.Text = "LowBeams";
+                                // PLAYER LED 1-5 true/false state
+                                p.instructions[inst_index].type = InstructionType.PlayerLED;
+                                p.instructions[inst_index].parameters = new object[] { controllerIndex, false, true, false, true, false };
+                                inst_index += +1;
+                            }
+                            else
+                            {
+                                // label1.Text = "OFF LIGHTS";
+                                p.instructions[inst_index].type = InstructionType.PlayerLED;
+                                p.instructions[inst_index].parameters = new object[] { controllerIndex, false, false, false, false, false };
+                                inst_index += +1;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        p.instructions[inst_index].type = InstructionType.PlayerLED;
+                        p.instructions[inst_index].parameters = new object[] { controllerIndex, false, false, false, false, false };
+                        inst_index += +1;
+                    }
+
+                    //Show Red Lights on LEDs on Breake
+                    if (BrakeRedLights.Checked)
+                    {
+                        if (data.Lights.BrakeLight)
+                        {
+                            p.instructions[inst_index].type = InstructionType.RGBUpdate;
+                            p.instructions[inst_index].parameters = new object[] { controllerIndex, 252, 3, 3 };
+                            inst_index += +1;
+                        }
+                    }
+                    
+
 
                     Send(p);
                 }
