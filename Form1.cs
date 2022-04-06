@@ -471,8 +471,6 @@ namespace ETS2_DualSenseAT_Mod
                             inst_index += +1;
                         }
                     }
-                    
-
 
                     Send(p);
                 }
