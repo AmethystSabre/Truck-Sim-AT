@@ -75,23 +75,34 @@ namespace ETS2_DualSenseAT_Mod
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Process[] pname = Process.GetProcessesByName("eurotrucks2");
-            if (pname.Length == 0)
+            Process[] ets2 = Process.GetProcessesByName("eurotrucks2");
+            Process[] ats = Process.GetProcessesByName("amtrucks");
+
+            if (ets.Length == 0 && ats.Length == 0)
             {
-                MessageBox.Show("Euro Truck Simulator 2 is not running, please open game first!", "DualSense AT Mod");
+                MessageBox.Show("Euro Truck Simulator 2 or American Truck Simulator is not running, please open game first!", "DualSense AT Mod");
                 Application.Exit();
             }
 
-            //if (!File.Exists(Application.StartupPath + "\\DualSenseX_CommandLineArgs.bat"))
-            //{
-            //    MessageBox.Show("DualSenseX Command Line not found.", "DualSense AT Mod");
-            //    Application.Exit();
-            //}
-
-            if (!Connect())
+            if (ats.Length > 0)
             {
-                MessageBox.Show("Failed to connect to the DSX UDP Server ("+ Triggers.localhost, Convert.ToInt32(File.ReadAllText(@"C:\Temp\DualSenseX\DualSenseX_PortNumber.txt")) + ")");
+                Constants.SetGame("amtrucks");
             }
+            else if (ets2.Length > 0)
+            {
+                Constants.SetGame("eurotrucks2");
+            }
+
+            //if (!File.Exists(Application.StartupPath + "\\DualSenseX_CommandLineArgs.bat"))
+                //{
+                //    MessageBox.Show("DualSenseX Command Line not found.", "DualSense AT Mod");
+                //    Application.Exit();
+                //}
+
+                if (!Connect())
+                {
+                    MessageBox.Show("Failed to connect to the DSX UDP Server (" + Triggers.localhost, Convert.ToInt32(File.ReadAllText(@"C:\Temp\DualSenseX\DualSenseX_PortNumber.txt")) + ")");
+                }
         }
 
         private void TelemetryOnJobFinished(object sender, EventArgs args)
