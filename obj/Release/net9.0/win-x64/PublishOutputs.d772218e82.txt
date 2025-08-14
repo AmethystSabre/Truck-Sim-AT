@@ -1,0 +1,2 @@
+D:\Games\Modding\ATS Mods\Truck Sim AT\bin\Release\net9.0\win-x64\publish\Truck Sim AT.pdb
+D:\Games\Modding\ATS Mods\Truck Sim AT\bin\Release\net9.0\win-x64\publish\Truck Sim AT.exe

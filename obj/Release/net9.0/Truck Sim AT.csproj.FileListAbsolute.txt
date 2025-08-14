@@ -1,0 +1,14 @@
+D:\Games\Modding\ATS Mods\Truck Sim AT\obj\Release\net9.0\Truck Sim AT.GeneratedMSBuildEditorConfig.editorconfig
+D:\Games\Modding\ATS Mods\Truck Sim AT\obj\Release\net9.0\Truck Sim AT.AssemblyInfoInputs.cache
+D:\Games\Modding\ATS Mods\Truck Sim AT\obj\Release\net9.0\Truck Sim AT.AssemblyInfo.cs
+D:\Games\Modding\ATS Mods\Truck Sim AT\obj\Release\net9.0\Truck Sim AT.csproj.CoreCompileInputs.cache
+D:\Games\Modding\ATS Mods\Truck Sim AT\bin\Release\net9.0\Truck Sim AT.exe
+D:\Games\Modding\ATS Mods\Truck Sim AT\bin\Release\net9.0\Truck Sim AT.deps.json
+D:\Games\Modding\ATS Mods\Truck Sim AT\bin\Release\net9.0\Truck Sim AT.runtimeconfig.json
+D:\Games\Modding\ATS Mods\Truck Sim AT\bin\Release\net9.0\Truck Sim AT.dll
+D:\Games\Modding\ATS Mods\Truck Sim AT\bin\Release\net9.0\Truck Sim AT.pdb
+D:\Games\Modding\ATS Mods\Truck Sim AT\obj\Release\net9.0\Truck Sim AT.dll
+D:\Games\Modding\ATS Mods\Truck Sim AT\obj\Release\net9.0\refint\Truck Sim AT.dll
+D:\Games\Modding\ATS Mods\Truck Sim AT\obj\Release\net9.0\Truck Sim AT.pdb
+D:\Games\Modding\ATS Mods\Truck Sim AT\obj\Release\net9.0\Truck Sim AT.genruntimeconfig.cache
+D:\Games\Modding\ATS Mods\Truck Sim AT\obj\Release\net9.0\ref\Truck Sim AT.dll
